@@ -27,7 +27,7 @@ So far, we have created a environment about INF-MLLM1, then we will introduce ho
 
 6) Please put the folder vcd_utils in ```./INF-MLLM1```.
 
-7) For dataset preparation, please put the given folder ```POPE``` and ```eval_tool``` into INF-MLLM1.
+7) For dataset preparation, please put the given folder ```POPE``` and ```eval_tool``` in ```./ INF-MLLM1```.
 
 8) Then, for MME dataset, please run:
    ```
