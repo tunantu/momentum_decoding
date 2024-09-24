@@ -31,7 +31,7 @@ So far, we have created a environment about INF-MLLM1, then we will introduce ho
 
 9) Then, for MME dataset, please run:
    ```
-   CUDA_VISIBLE_DEVICES=0 python inf-mme.py --model_path "./InfMLLM_7B_Chat"
+   CUDA_VISIBLE_DEVICES=0 python inf-mme.py --model_path "./InfMLLM_7B_Chat" --use_opera
    ```
 
 10) For POPE (coco), please run:
