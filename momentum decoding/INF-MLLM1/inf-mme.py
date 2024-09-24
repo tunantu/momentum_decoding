@@ -55,17 +55,83 @@ def get_prompt(conv_mode, question, history=[]):
     return prompt
 
 def generate(model, tokenizer, stop_str, input_ids, image_tensor):
-    with torch.inference_mode():
-        output_ids = model.generate(
-            input_ids,
-            images=image_tensor.unsqueeze(0).to(dtype=torch.bfloat16, device='cuda', non_blocking=True),
-            do_sample=True if args.temperature > 0 else False,
-            temperature=args.temperature,
-            top_p=args.top_p,
-            num_beams=args.num_beams,
-            max_new_tokens=args.max_new_tokens,
-            use_cache=True,
-            output_hidden_states=args.output_hidden_states)
+    if args.use_cd:
+        from vcd_utils.vcd_add_noise import add_diffusion_noise
+        image_tensor_cd = add_diffusion_noise(image_tensor, args.noise_step)
+        with torch.inference_mode():
+            output_ids = model.generate(
+                input_ids,
+                images=image_tensor.unsqueeze(0).cuda().to(dtype=torch.bfloat16),
+                images_cd=(image_tensor_cd.unsqueeze(0).cuda().to(dtype=torch.bfloat16) if image_tensor_cd is not None else None),
+                do_sample=True if args.temperature > 0 else False,
+                temperature=args.temperature,
+                top_p=args.top_p,
+                num_beams=args.num_beams,
+                max_new_tokens=args.max_new_tokens,
+                use_cache=True,
+                cd_alpha = args.cd_alpha,
+                cd_beta = args.cd_beta,
+                output_hidden_states=args.output_hidden_states)
+            
+    elif args.use_dola:
+        with torch.inference_mode():
+            output_ids = model.generate(
+                input_ids,
+                images=image_tensor.unsqueeze(0).to(dtype=torch.bfloat16, device='cuda', non_blocking=True),
+                do_sample=True if args.temperature > 0 else False,
+                temperature=args.temperature,
+                top_p=args.top_p,
+                num_beams=args.num_beams,
+                max_new_tokens=args.max_new_tokens,
+                use_cache=True,
+                output_hidden_states=args.output_hidden_states,
+                dola_decoding=True,
+                mature_layer=32,
+                base_layer=None,
+                candidate_premature_layers=[0,2,4,6,8,10,12,14],
+                relative_top= 0,
+                contrastive_decoding=None,
+                student_model = None,
+                )
+            
+    elif args.use_opera:
+        key_position = {
+            "image_start": 35,
+            "image_end": 1378,
+            "response_start": input_ids.size(1) + 1344-1,
+            }
+        with torch.inference_mode():
+            output_ids = model.generate(
+                input_ids,
+                images=image_tensor.unsqueeze(0).to(dtype=torch.bfloat16, device='cuda', non_blocking=True),
+                do_sample=True if args.temperature > 0 else False,
+                temperature=args.temperature,
+                top_p=args.top_p,
+                max_new_tokens=args.max_new_tokens,
+                output_hidden_states=args.output_hidden_states,
+                num_beams=4,
+                output_attentions=True,
+                opera_decoding=True,
+                scale_factor=50,
+                threshold=25,
+                num_attn_candidates=1,
+                penalty_weights=1,
+                key_position=key_position,
+                )
+                        
+            
+    else:
+        with torch.inference_mode():
+            output_ids = model.generate(
+                input_ids,
+                images=image_tensor.unsqueeze(0).to(dtype=torch.bfloat16, device='cuda', non_blocking=True),
+                do_sample=True if args.temperature > 0 else False,
+                temperature=args.temperature,
+                top_p=args.top_p,
+                num_beams=args.num_beams,
+                max_new_tokens=args.max_new_tokens,
+                use_cache=True,
+                output_hidden_states=args.output_hidden_states)
         
     input_token_len = input_ids.shape[1]
     n_diff_input_output = (input_ids != output_ids[:, :input_token_len]).sum().item()
@@ -86,6 +152,12 @@ parser.add_argument("--top_p", type=float, default=None)
 parser.add_argument("--num_beams", type=int, default=1)
 parser.add_argument("--max_new_tokens", type=int, default=1024)
 parser.add_argument("--output_hidden_states", type=bool, default=True)
+parser.add_argument("--noise_step", type=int, default=500)
+parser.add_argument("--cd_alpha", type=float, default=1)
+parser.add_argument("--cd_beta", type=float, default=0.1)
+parser.add_argument("--use_cd", type=bool, default=False)
+parser.add_argument("--use_dola", type=bool, default=False)
+parser.add_argument("--use_opera", type=bool, default=False)
 args = parser.parse_args()
     
 
