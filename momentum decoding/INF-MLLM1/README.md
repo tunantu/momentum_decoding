@@ -28,3 +28,22 @@ So far, we have created a environment about INF-MLLM1, then we will introduce ho
 6) Please put the folder vcd_utils in ```./INF-MLLM1```.
 
 7) For dataset preparation, please put the given folder ```POPE``` and ```eval_tool``` into INF-MLLM1.
+
+8) Then, for MME dataset, please run:
+   ```
+   CUDA_VISIBLE_DEVICES=0 python inf-mme.py --model_path "./InfMLLM_7B_Chat"
+   ```
+
+9) For POPE (coco), please run:
+    ```
+    CUDA_VISIBLE_DEVICES=0 python inf-pope.py  --dataset coco --setting random --output_dir opera  --use_opera
+    CUDA_VISIBLE_DEVICES=0 python inf-pope.py  --dataset coco --setting popular --output_dir opera  --use_opera
+    CUDA_VISIBLE_DEVICES=0 python inf-pope.py  --dataset coco --setting adversarial --output_dir opera  --use_opera 
+    ```
+10) For POPE(aokvqa), please run:
+    ```
+    CUDA_VISIBLE_DEVICES=0 python inf-pope.py  --dataset aokvqa --setting random --output_dir opera  --use_opera
+    CUDA_VISIBLE_DEVICES=0 python inf-pope.py  --dataset aokvqa --setting popular --output_dir opera  --use_opera
+    CUDA_VISIBLE_DEVICES=0 python inf-pope.py  --dataset aokvqa --setting adversarial --output_dir opera  --use_opera
+
+    ```
