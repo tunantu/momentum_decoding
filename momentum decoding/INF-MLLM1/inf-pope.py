@@ -111,7 +111,7 @@ def generate(model, tokenizer, stop_str, input_ids, image_tensor):
                 top_p=args.top_p,
                 max_new_tokens=args.max_new_tokens,
                 output_hidden_states=args.output_hidden_states,
-                num_beams=2,
+                num_beams=4,
                 output_attentions=True,
                 opera_decoding=True,
                 scale_factor=50,
@@ -223,7 +223,7 @@ elif args.dataset =="aokvqa":
         image = data.get('image')
         question = data.get('text')
         question_id = data.get('question_id')
-        image_path = f"/home/shibin/kaishen/editing/manual_data/vqadataset/val2014/{image}"
+        image_path = f"/val2014/{image}"
 
         prompt = get_prompt(args.conv_mode, question)
         input_ids = tokenizer_image_token(prompt, tokenizer, IMAGE_TOKEN_INDEX, return_tensors='pt').unsqueeze(0)
