@@ -155,9 +155,9 @@ parser.add_argument("--output_hidden_states", type=bool, default=True)
 parser.add_argument("--noise_step", type=int, default=500)
 parser.add_argument("--cd_alpha", type=float, default=1)
 parser.add_argument("--cd_beta", type=float, default=0.1)
-parser.add_argument("--use_cd", type=bool, default=False)
-parser.add_argument("--use_dola", type=bool, default=False)
-parser.add_argument("--use_opera", type=bool, default=False)
+parser.add_argument("--use_cd", action='store_true', default=False)
+parser.add_argument("--use_dola", action='store_true', default=False)
+parser.add_argument("--use_opera", action='store_true', default=False)
 args = parser.parse_args()
     
 
