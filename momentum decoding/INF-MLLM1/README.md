@@ -22,3 +22,5 @@ This documentation is about the OPERA decoding in INF-MLLM1, please follow the u
 So far, we have created a environment about INF-MLLM1, then we will introduce how to apply OPERA.
 
 4) Please replace the ```~/.conda/envs/infmllm/lib/python3.9/site-packages/transformers/generation/utils.py``` of the original environment with ours.
+
+5) Then, please replace the model weight file ```InfMLLM_7B_Chat/modeling_infmllm_chat.py``` with our updated version.
